@@ -151,15 +151,20 @@ async function monitorContract() {
 async function getTokenData(tokenId) {
   try {
     // retrieve metadata for asset from opensea
-    const response = await axios.get(
-      `https://api.opensea.io/api/v1/asset/${process.env.CONTRACT_ADDRESS}/${tokenId}`,
-      {
-        headers: {
-          'X-API-KEY': process.env.X_API_KEY,
-        },
-      }
-    );
+    // const response = await axios.get(
+    //   `https://api.opensea.io/api/v1/asset/${process.env.CONTRACT_ADDRESS}/${tokenId}`,
+    //   {
+    //     headers: {
+    //       'X-API-KEY': process.env.X_API_KEY,
+    //     },
+    //   }
+    // );
+    // const data = response.data;
 
+    // retrieve metadata for asset from gmdao metadata-api
+    const response = await axios.get(
+      `https://api.gmstudio.art/collections/plasticity/token/${tokenId}.json`,
+    );
     const data = response.data;
 
     // just the asset name for now, but retrieve whatever you need
