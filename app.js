@@ -163,7 +163,7 @@ async function getTokenData(tokenId) {
 
     // retrieve metadata for asset from gmdao metadata-api
     const response = await axios.get(
-      `https://gmdao-metadata-api-prod.herokuapp.com/collections/plasticity/token/${tokenId}.json`,
+      `https://api.gmstudio.art/collections/plasticity/token/${tokenId}.json`,
     );
     const data = response.data;
 
