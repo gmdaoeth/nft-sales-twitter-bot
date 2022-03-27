@@ -10,6 +10,7 @@ const { currencies } = require('./currencies.js');
 const { transferEventTypes, saleEventTypes } = require('./log_event_types.js');
 const { tweet } = require('./tweet');
 const abi = require('./abi.json');
+const { fetchBase64Image } = require("./utils");
 
 // connect to Alchemy websocket
 const web3 = createAlchemyWeb3(
@@ -113,7 +114,8 @@ async function monitorContract() {
       // }
 
       // retrieve metadata for the first (or only) ERC21 asset sold
-      const tokenData = await getTokenData(tokens[0]);
+      const tokenId = tokens[0];
+      const tokenData = await getTokenData(tokenId);
 
       // if more than one asset sold, link directly to etherscan tx, otherwise the marketplace item
       if (tokens.length > 1) {
@@ -121,20 +123,24 @@ async function monitorContract() {
           `${_.get(
             tokenData,
             'assetName',
-            `#` + tokens[0]
+            `#` + tokenId
           )} & other assets bought for ${totalPrice} ${currency.name} on ${
             market.name
-          } https://etherscan.io/tx/${transactionHash}`
+          } https://etherscan.io/tx/${transactionHash}`,
+          tokenData.assetName,
+          tokenData.imageB64
         );
       } else {
         tweet(
           `${_.get(
             tokenData,
             'assetName',
-            `#` + tokens[0]
+            `#` + tokenId
           )} bought for ${totalPrice} ${currency.name} on ${market.name} ${
             market.site
-          }${process.env.CONTRACT_ADDRESS}/${tokens[0]}`
+          }${process.env.CONTRACT_ADDRESS}/${tokenId}`,
+          tokenData.assetName,
+          tokenData.imageB64
         );
       }
     })
@@ -167,9 +173,13 @@ async function getTokenData(tokenId) {
     );
     const data = response.data;
 
+    const imageUrl = _.get(data, 'image');
+    const imageB64 = await fetchBase64Image(imageUrl);
+
     // just the asset name for now, but retrieve whatever you need
     return {
       assetName: _.get(data, 'name'),
+      imageB64,
     };
   } catch (error) {
     if (error.response) {
