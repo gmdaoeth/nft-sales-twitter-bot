@@ -50,7 +50,7 @@ In the Settings section of your Heroku app you'll see a **Config Vars** section.
 - **ACCESS_TOKEN_SECRET** - The Access Token Secret of the Twitter Account your bot is posting from
 - **CONTRACT_ADDRESS** - The contract address you want to monitor sales for
 - **ALCHEMY_API_KEY** - Your unique Alchemy API key
-- **X_API_KEY** - Your unique OpenSea API key
+- **OPENSEA_API_KEY** - Your unique OpenSea API key
 
 Now you're ready to release - just push up the code via. git to the Heroku remote (see [Heroku Remote](https://devcenter.heroku.com/articles/git#creating-a-heroku-remote) if unsure how).
 
