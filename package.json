@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "dev": "NODE_ENV=development nodemon app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -24,5 +25,8 @@
     "ethers": "^5.5.4",
     "lodash": "^4.17.21",
     "twit": "^2.2.11"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.18"
   }
 }
