@@ -181,41 +181,29 @@ const onError = (error, receipt) => {
   console.error(receipt);
 }
 
-// temporary: a map to map from contract addresses to the slug of our metadata-api
-const metadataMap = {
-  // rinkeby addresses
-  '0x811Dd29d4c0d6822ae5e79dc4880785C63866CD5': 'mtg',
-  '0xD96b847812004C52fd4a4a929B331D37a4013544': 'plasticity',
-  '0x32fA4F057fCb21213714CCefA355D05E2d44EAd9': 'koripo',
-  // mainnet addresses
-  '0x0e42ffbac75bcc30cd0015f8aaa608539ba35fbb': 'mtg',
-  '0x65d8b2bf930a0015028efcaee5af7bf61b90b76f': 'plasticity',
-  '0x1E725bcc09aD221D35af5aDEdA404Fb2147b43fa': 'koripo',
-};
-
 async function getTokenData(tokenId, contractAddress) {
   try {
+
+    let response;
+
     // retrieve metadata for asset from opensea
-    // const response = await axios.get(
-    //   `https://api.opensea.io/api/v1/asset/${process.env.CONTRACT_ADDRESS}/${tokenId}`,
-    //   {
-    //     headers: {
-    //       'X-API-KEY': process.env.X_API_KEY,
-    //     },
-    //   }
-    // );
-    // const data = response.data;
-
-    // retrieve metadata for asset from gmdao metadata-api
-    const slug = metadataMap[contractAddress];
-    const url = process.env.NODE_ENV === "development" ?
-      `https://gmdao-metadata-api-staging.herokuapp.com/collections/${slug}/token/${tokenId}.json` :
-      `https://api.gmstudio.art/collections/${slug}/token/${tokenId}.json`;
-
-    const response = await axios.get(url);
+    if (process.env.NODE_ENV === "development") {
+      response = await axios.get(
+        `https://testnets-api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
+      )
+    } else {
+      response = await axios.get(
+        `https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
+        {
+          headers: {
+            'X-API-KEY': process.env.OPENSEA_API_KEY,
+          },
+        }
+      )
+    }
     const data = response.data;
 
-    const imageUrl = _.get(data, 'image');
+    const imageUrl = _.get(data, 'image_url');
     const imageB64 = await fetchBase64Image(imageUrl);
 
     // just the asset name for now, but retrieve whatever you need
