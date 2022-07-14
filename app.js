@@ -74,7 +74,7 @@ async function monitorContract() {
         const recipient = receipt.to.toLowerCase();
 
         if (!(recipient in markets)) {
-          console.log("Not a marketplace transaction transfer, skip")
+          console.log(`Recipient ${recipient} not in markets. Not a marketplace transaction transfer, skip`);
           return;
         }
 

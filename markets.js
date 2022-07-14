@@ -1,21 +1,24 @@
+const openSeaMarket = {
+    'name': 'OpenSea 🌊',
+    'site': 'https://opensea.io/assets/',
+    'logDecoder': [{
+        type: 'bytes32',
+        name: 'buyHash'
+    }, {
+        type: 'bytes32',
+        name: 'sellHash',
+    },{
+        type: 'uint256',
+        name: 'price',
+    }]
+};
+
 const markets = {
     // OpenSea Contract Address
-    '0x7f268357a8c2552623316e2562d90e642bb538e5' : {
-        'name': 'OpenSea 🌊',
-        'site': 'https://opensea.io/assets/',
-        'logDecoder': [{
-            type: 'bytes32',
-            name: 'buyHash'
-        }, {
-            type: 'bytes32',
-            name: 'sellHash',
-        },{
-            type: 'uint256',
-            name: 'price',
-        }]
-    },
+    '0x7be8076f4ea4a4ad08075c2508e481d6c946d12b': openSeaMarket, // old contract address
+    '0x7f268357a8c2552623316e2562d90e642bb538e5': openSeaMarket, // new contract address
     // LooksRareExchange Contract Address
-    '0x59728544b08ab483533076417fbbb2fd0b17ce3a' : {
+    '0x59728544b08ab483533076417fbbb2fd0b17ce3a': {
         'name': 'LooksRare 👀💎',
         'site': 'https://looksrare.org/collections/',
         'logDecoder': [{
