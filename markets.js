@@ -17,6 +17,7 @@ const markets = {
     // OpenSea Contract Address
     '0x7be8076f4ea4a4ad08075c2508e481d6c946d12b': openSeaMarket, // old contract address
     '0x7f268357a8c2552623316e2562d90e642bb538e5': openSeaMarket, // new contract address
+    '0x00000000006c3852cbef3e08e8df289169ede581': openSeaMarket, // extra address
     // LooksRareExchange Contract Address
     '0x59728544b08ab483533076417fbbb2fd0b17ce3a': {
         'name': 'LooksRare 👀💎',
