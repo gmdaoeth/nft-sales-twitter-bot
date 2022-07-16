@@ -8,7 +8,7 @@ So, we need to monitor & process Ethereum event logs for ERC-721 token transacti
 
 The aim is to monitor all sales across Ethereum for a given contract. However, different marketplaces can send sale logs in different formats, so we need to process major market logs manually (see `markets.js`).
 
-Right now `Opensea` and `LooksRare` marketplaces are integrated, but it should be easy to add others in the future.
+Right now `Opensea`, `LooksRare` & `X2Y2` marketplaces are integrated, but it should be easy to add others in the future.
 
 ## Donations 💵
 
@@ -64,6 +64,10 @@ heroku ps:scale worker=1
 ## Modification 🛠
 
 In `app.js`, you'll notice there's some commented out logic for only posting sales above a certain `threshold` that you can modify per-currency in `currencies.js`.
+
+## Credits
+
+[Kenryu42](https://github.com/kenryu42) for their help on adding seaport support
 
 ## License 📃
 
