@@ -1,11 +1,11 @@
 // external
 const { createAlchemyWeb3 } = require('@alch/alchemy-web3');
-const axios = require('axios');
 const { ethers } = require('ethers');
 const retry = require('async-retry');
 const _ = require('lodash');
 // local
 const { markets } = require('./markets.js');
+const { getTokenData, getSeaportSalePrice } = require('./utils.js');
 const { currencies } = require('./currencies.js');
 const { transferEventTypes, saleEventTypes } = require('./log_event_types.js');
 const { tweet } = require('./tweet');
@@ -113,12 +113,19 @@ async function monitorContract() {
               []
             );
 
+            if (market.name == 'Opensea ⚓️') {
+            totalPrice = getSeaportSalePrice(decodedLogData);
+          } else if (market.name == 'X2Y2 ⭕️') {
             totalPrice = ethers.utils.formatUnits(
+              decodedLogData.amount,
+              currency.decimals
+            );
+          } else {totalPrice = ethers.utils.formatUnits(
               decodedLogData.price,
               currency.decimals
             );
           }
-        }
+        }}
 
         // remove any dupes
         tokens = _.uniq(tokens);
@@ -181,45 +188,45 @@ const onError = (error, receipt) => {
   console.error(receipt);
 }
 
-async function getTokenData(tokenId, contractAddress) {
-  try {
-
-    let response;
-
-    // retrieve metadata for asset from opensea
-    if (process.env.NODE_ENV === "development") {
-      response = await axios.get(
-        `https://testnets-api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
-      )
-    } else {
-      response = await axios.get(
-        `https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
-        {
-          headers: {
-            'X-API-KEY': process.env.OPENSEA_API_KEY,
-          },
-        }
-      )
-    }
-    const data = response.data;
-
-    const imageUrl = _.get(data, 'image_url');
-    const imageB64 = await fetchBase64Image(imageUrl);
-
-    // just the asset name for now, but retrieve whatever you need
-    return {
-      assetName: _.get(data, 'name'),
-      imageB64,
-    };
-  } catch (error) {
-    if (error.response) {
-      console.log(error.response.data);
-      console.log(error.response.status);
-    } else {
-      console.error(error.message);
-    }
-  }
-}
+// async function getTokenData(tokenId, contractAddress) {
+//   try {
+//
+//     let response;
+//
+//     // retrieve metadata for asset from opensea
+//     if (process.env.NODE_ENV === "development") {
+//       response = await axios.get(
+//         `https://testnets-api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
+//       )
+//     } else {
+//       response = await axios.get(
+//         `https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
+//         {
+//           headers: {
+//             'X-API-KEY': process.env.OPENSEA_API_KEY,
+//           },
+//         }
+//       )
+//     }
+//     const data = response.data;
+//
+//     const imageUrl = _.get(data, 'image_url');
+//     const imageB64 = await fetchBase64Image(imageUrl);
+//
+//     // just the asset name for now, but retrieve whatever you need
+//     return {
+//       assetName: _.get(data, 'name'),
+//       imageB64,
+//     };
+//   } catch (error) {
+//     if (error.response) {
+//       console.log(error.response.data);
+//       console.log(error.response.status);
+//     } else {
+//       console.error(error.message);
+//     }
+//   }
+// }
 
 // initate websocket connection
 monitorContract();
