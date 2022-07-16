@@ -12,6 +12,22 @@ const twitterClient = new twit(twitterConfig);
 // Tweet a text-based status
 async function tweet(tweetText, assetName, imageB64) {
 
+  // no image, just tweet the text
+  if (!imageB64) {
+    const params = { status: tweetText }
+
+    twitterClient.post('statuses/update', params, function (err, data, response) {
+      if (err) {
+        console.error("Failed to tweet new status");
+        console.error(err)
+        return;
+      }
+
+      console.log(`Successfully tweeted: ${tweetText}`);
+    });
+    return;
+  }
+
     // first we must post the media to Twitter
     twitterClient.post('media/upload', { media_data: imageB64 }, function (err, data, response) {
       if (err) {
@@ -46,14 +62,6 @@ async function tweet(tweetText, assetName, imageB64) {
         });
       })
     });
-
-    // twitterClient.post('statuses/update', tweet, (error, tweet, response) => {
-    //   if (!error) {
-    //     console.log(`Successfully tweeted: ${tweetText}`);
-    //   } else {
-    //     console.error(error);
-    //   }
-    // });
 }
 
 

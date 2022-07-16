@@ -144,7 +144,7 @@ const markets = {
 const rinkebyMarkets = {
     // OpenSea - Seaport
     '0x00000000006c3852cbef3e08e8df289169ede581' : {
-        'name': 'OpenSea 🌊',
+        name: 'Opensea ⚓️',
         'site': 'https://testnets.opensea.io/assets/',
         'logDecoder': [
             {

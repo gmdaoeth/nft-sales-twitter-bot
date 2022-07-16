@@ -25,13 +25,13 @@ function _reducer(previous, current) {
   }
 }
 
-function getSeaportSalePrice(decodedLogData) {
+function getSeaportSalePrice(decodedLogData, contractAddress) {
   const offer = decodedLogData.offer;
   const consideration = decodedLogData.consideration;
 
   const offerSideNfts = offer.some(
     (item) =>
-      item.token.toLowerCase() === process.env.CONTRACT_ADDRESS.toLowerCase()
+      item.token.toLowerCase() === contractAddress.toLowerCase()
   );
 
   // if nfts are on the offer side, then consideration is the total price, otherwise the offer is the total price
@@ -46,25 +46,46 @@ function getSeaportSalePrice(decodedLogData) {
   }
 }
 
-async function getTokenData(tokenId) {
+async function getTokenData(tokenId, contractAddress) {
   try {
-    const assetName = await retry(
+    const assetData = await retry(
       async (bail) => {
+        let response;
+
         // retrieve metadata for asset from opensea
-        const response = await axios.get(
-          `https://api.opensea.io/api/v1/asset/${process.env.CONTRACT_ADDRESS}/${tokenId}`,
-          {
-            headers: {
-              'X-API-KEY': process.env.X_API_KEY,
-            },
-          }
-        );
+        if (process.env.NODE_ENV === "development") {
+          response = await axios.get(
+            `https://testnets-api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
+          )
+        } else {
+          response = await axios.get(
+            `https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
+            {
+              headers: {
+                'X-API-KEY': process.env.OPENSEA_API_KEY,
+              },
+            }
+          )
+        }
 
         const data = response.data;
+        const imageUrl = _.get(data, 'image_url');
 
-        // just the asset name for now, but retrieve whatever you need
+        let imageB64 = null;
+        try {
+          if (imageUrl) {
+            imageB64 = await fetchBase64Image(imageUrl);
+          } else {
+            console.warn(`No image found for ${tokenId}`);
+          }
+        } catch (e) {
+          console.error(`Error fetching image OS image_url, ${imageUrl}`);
+          console.error(e);
+        }
+
         return {
           assetName: _.get(data, 'name'),
+          imageB64,
         };
       },
       {
@@ -72,7 +93,7 @@ async function getTokenData(tokenId) {
       }
     );
 
-    return assetName;
+    return assetData;
   } catch (error) {
     if (error.response) {
       console.log(error.response.data);
@@ -84,7 +105,6 @@ async function getTokenData(tokenId) {
 }
 
 module.exports = {
-  fetchBase64Image,
   getSeaportSalePrice: getSeaportSalePrice,
   getTokenData: getTokenData,
 };

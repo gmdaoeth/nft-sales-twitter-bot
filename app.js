@@ -10,7 +10,6 @@ const { currencies } = require('./currencies.js');
 const { transferEventTypes, saleEventTypes } = require('./log_event_types.js');
 const { tweet } = require('./tweet');
 const abi = require('./ERC721.json').abi;
-const { fetchBase64Image } = require("./utils");
 
 // connect to Alchemy websocket
 const web3 = createAlchemyWeb3(
@@ -113,17 +112,18 @@ async function monitorContract() {
               []
             );
 
-            if (market.name == 'Opensea ⚓️') {
-            totalPrice = getSeaportSalePrice(decodedLogData);
+          if (market.name == 'Opensea ⚓️') {
+            totalPrice = getSeaportSalePrice(decodedLogData, contractAddress);
           } else if (market.name == 'X2Y2 ⭕️') {
             totalPrice = ethers.utils.formatUnits(
               decodedLogData.amount,
               currency.decimals
             );
-          } else {totalPrice = ethers.utils.formatUnits(
-              decodedLogData.price,
-              currency.decimals
-            );
+          } else {
+              totalPrice = ethers.utils.formatUnits(
+                decodedLogData.price,
+                currency.decimals
+              );
           }
         }}
 
@@ -188,45 +188,5 @@ const onError = (error, receipt) => {
   console.error(receipt);
 }
 
-// async function getTokenData(tokenId, contractAddress) {
-//   try {
-//
-//     let response;
-//
-//     // retrieve metadata for asset from opensea
-//     if (process.env.NODE_ENV === "development") {
-//       response = await axios.get(
-//         `https://testnets-api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
-//       )
-//     } else {
-//       response = await axios.get(
-//         `https://api.opensea.io/api/v1/asset/${contractAddress}/${tokenId}`,
-//         {
-//           headers: {
-//             'X-API-KEY': process.env.OPENSEA_API_KEY,
-//           },
-//         }
-//       )
-//     }
-//     const data = response.data;
-//
-//     const imageUrl = _.get(data, 'image_url');
-//     const imageB64 = await fetchBase64Image(imageUrl);
-//
-//     // just the asset name for now, but retrieve whatever you need
-//     return {
-//       assetName: _.get(data, 'name'),
-//       imageB64,
-//     };
-//   } catch (error) {
-//     if (error.response) {
-//       console.log(error.response.data);
-//       console.log(error.response.status);
-//     } else {
-//       console.error(error.message);
-//     }
-//   }
-// }
-
-// initate websocket connection
+// initiate websocket connection
 monitorContract();
