@@ -11,6 +11,12 @@ const currencies = {
     decimals: 18,
     threshold: 1,
   },
+  // WETH (Goerli)
+  '0xb4fbf271143f4fbf7b91a5ded31805e42b2208d6': {
+    name: 'GWETH',
+    decimals: 18,
+    threshold: 1,
+  },
   // DAI
   '0x6b175474e89094c44da98b954eedeac495271d0f': {
     name: 'DAI',
