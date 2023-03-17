@@ -5,10 +5,11 @@ const retry = require('async-retry');
 const _ = require('lodash');
 // local
 const { markets } = require('./markets.js');
-const { getTokenData, getSeaportSalePrice } = require('./utils.js');
+const { getSeaportSalePrice } = require('./utils.js');
 const { currencies } = require('./currencies.js');
 const { transferEventTypes, saleEventTypes } = require('./log_event_types.js');
 const { tweet } = require('./tweet');
+const { getTokenData } = require("./utils.gm");
 const abi = require('./ERC721.json').abi;
 
 // connect to Alchemy websocket
