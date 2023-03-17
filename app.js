@@ -41,9 +41,7 @@ async function monitorContract() {
   // setup listeners for each contract
   contracts.forEach((contract) => {
 
-    // TODO: Get contract address here?
-
-    const contractAddress = contract.options.address;
+    const contractAddress = contract.address;
     console.log(`Subscribing to events for contract: ${contractAddress}`);
 
     contract.on('Transfer', async (...params) => {
@@ -52,7 +50,7 @@ async function monitorContract() {
       const transactionHash = event.transactionHash.toLowerCase();
 
       // duplicate transaction - skip process
-      if (transactionHash === lastTransactionHash) {
+      if (transactionHash == lastTransactionHash) {
         return;
       }
 
@@ -153,29 +151,23 @@ async function monitorContract() {
 
       // retrieve metadata for the first (or only) ERC-721 asset sold
       const tokenId = tokens[0];
-      const metadata = await alchemy.nft.getNftMetadata(
-        contractAddress,
-        tokenId,
-        {}
-      );
-      // TODO: Replace with alchemy, or keep using OS?
       const tokenData = await getTokenData(tokenId, contractAddress);
 
       // if more than one asset sold, link directly to etherscan tx, otherwise the marketplace item
       if (tokens.length > 1) {
         tweet(
-          `${metadata.title} & other assets bought for ${totalPrice} ${currency.name} on ${
+          `${tokenData.assetName} & other assets bought for ${totalPrice} ${currency.name} on ${
             market.name
           } https://etherscan.io/tx/${transactionHash}`,
-          metadata.title,
+          tokenData.assetName,
           tokenData.imageB64
         );
       } else {
         tweet(
-          `${metadata.title} bought for ${totalPrice} ${currency.name} on ${market.name} ${
+          `${tokenData.assetName} bought for ${totalPrice} ${currency.name} on ${market.name} ${
             market.site
           }${contractAddress}/${tokenId}`,
-          metadata.title,
+          tokenData.assetName,
           tokenData.imageB64
         );
       }
