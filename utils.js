@@ -1,5 +1,5 @@
 // external
-const { ethers, BigNumber} = require('ethers');
+const { ethers } = require('ethers');
 // local
 const { currencies } = require('./currencies.js');
 
@@ -23,17 +23,24 @@ function getSeaportSalePrice(decodedLogData, contractAddress) {
     (item) =>
       item.token.toLowerCase() === contractAddress.toLowerCase()
   );
+  const considerationSideNfts = consideration.some(
+    (item) =>
+      item.token.toLowerCase() === contractAddress.toLowerCase()
+  );
 
   // if nfts are on the offer side, then consideration is the total price, otherwise the offer is the total price
   if (offerSideNfts) {
     const totalConsiderationAmount = consideration.reduce(_reducer, 0);
 
     return totalConsiderationAmount;
-  } else {
+  }
+  if (considerationSideNfts) {
     const totalOfferAmount = offer.reduce(_reducer, 0);
 
     return totalOfferAmount;
   }
+
+  return 0;
 }
 
 module.exports = {
